@@ -10,15 +10,20 @@ function displayMovies(movies) {
 
     return `
       <div class="movie-card">
-        ${poster ? `<img class="movie-card__img" src="${poster}" alt="${movie.Title} poster">` : `<div class="movie-card__poster-placeholder">Movie Poster Not Available</div>`}
+        <img class="movie-card__img" src="${poster}" alt="${movie.Title} poster" onerror="this.outerHTML='<div class=&quot;movie-card__poster-placeholder&quot;>Movie Poster Not Available</div>'">
         <h2 class="movie-card__title">${movie.Title}</h2>
         <p class="movie-card__year">${movie.Year}</p>
       </div>
     `;
   }).join('');
 
+  document.getElementById("resultsInfo").innerHTML = `<span>Showing: </span>${searchTerm}`;
   document.getElementById('moviesGrid').innerHTML = movieResults;
   }
 }
 
-main('Marvel');
+document.getElementById("searchForm").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const searchTerm = document.getElementById("searchInput").value;
+  main(searchTerm);
+})
