@@ -1,4 +1,7 @@
+let currentMovies = [];
+
 async function main(searchTerm) {
+loadingState();
 function loadingState() {
   const loadingHTML = `
     <div class="movie-card movie-card--skeleton">
@@ -8,13 +11,17 @@ function loadingState() {
     </div>
   `;
 
-  document.getElementById('moviesGrid').innerHTML = loadingHTML;
+  const skeletons = Array.from({ length: 10 }, () => loadingHTML).join('');
+
+
+  document.getElementById('moviesGrid').innerHTML = skeletons;
 }
+
+loadingState();
 
   const movies = await fetch(`https://www.omdbapi.com/?apikey=d33b9ed4&s=${searchTerm}`);
   const moviesData = await movies.json();
   console.log(moviesData);
-  displayMovies(moviesData.Search);
 
 function displayMovies(movies) {
   const movieResults = movies.map(movie => {
@@ -32,6 +39,15 @@ function displayMovies(movies) {
   document.getElementById("resultsInfo").innerHTML = `<span>Showing: </span>${searchTerm}`;
   document.getElementById('moviesGrid').innerHTML = movieResults;
   }
+
+  document.getElementById("sortSelect").addEventListener("change", (event) => {
+  const sorted = [...currentMovies];
+  if (event.target.value === "a-z") sorted.sort((a, b) => a.Title.localeCompare(b.Title));
+  if (event.target.value === "z-a") sorted.sort((a, b) => b.Title.localeCompare(a.Title));
+  if (event.target.value === "newest") sorted.sort((a, b) => parseInt(b.Year) - parseInt(a.Year));
+  if (event.target.value === "oldest") sorted.sort((a, b) => parseInt(a.Year) - parseInt(b.Year));
+  displayMovies(sorted);
+});
 }
 
 document.getElementById("searchForm").addEventListener("submit", (event) => {
