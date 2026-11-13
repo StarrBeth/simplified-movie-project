@@ -7,12 +7,12 @@ function loadingState() {
       <div class="movie-card__title--skeleton"></div>
       <div class="movie-card__year--skeleton"></div>
     </div>
-  `};
+  `;
 
   const skeletons = Array.from({ length: 10 }, () => loadingHTML).join('');
 
-
   document.getElementById('moviesGrid').innerHTML = skeletons;
+} 
 
 function displayMovies(movies) {
   const movieResults = movies.map(movie => {
@@ -26,6 +26,8 @@ function displayMovies(movies) {
       </div>
     `;
   }).join('');
+  document.getElementById('moviesGrid').innerHTML = movieResults;
+}
 
 async function main(searchTerm) {
   loadingState();
