@@ -1,7 +1,5 @@
 let currentMovies = [];
 
-async function main(searchTerm) {
-loadingState();
 function loadingState() {
   const loadingHTML = `
     <div class="movie-card movie-card--skeleton">
@@ -9,19 +7,12 @@ function loadingState() {
       <div class="movie-card__title--skeleton"></div>
       <div class="movie-card__year--skeleton"></div>
     </div>
-  `;
+  `};
 
   const skeletons = Array.from({ length: 10 }, () => loadingHTML).join('');
 
 
   document.getElementById('moviesGrid').innerHTML = skeletons;
-}
-
-loadingState();
-
-  const movies = await fetch(`https://www.omdbapi.com/?apikey=d33b9ed4&s=${searchTerm}`);
-  const moviesData = await movies.json();
-  console.log(moviesData);
 
 function displayMovies(movies) {
   const movieResults = movies.map(movie => {
@@ -36,11 +27,20 @@ function displayMovies(movies) {
     `;
   }).join('');
 
-  document.getElementById("resultsInfo").innerHTML = `<span>Showing: </span>${searchTerm}`;
-  document.getElementById('moviesGrid').innerHTML = movieResults;
-  }
+async function main(searchTerm) {
+  loadingState();
 
-  document.getElementById("sortSelect").addEventListener("change", (event) => {
+  const movies = await fetch(`https://www.omdbapi.com/?apikey=d33b9ed4&s=${searchTerm}`);
+  const moviesData = await movies.json();
+
+  setTimeout(() => {
+    currentMovies = moviesData.Search;
+    document.getElementById("resultsInfo").innerHTML = `<span>Showing: </span>${searchTerm}`; 
+    displayMovies(currentMovies);
+  }, 1000);
+}
+
+document.getElementById("sortSelect").addEventListener("change", (event) => {
   const sorted = [...currentMovies];
   if (event.target.value === "a-z") sorted.sort((a, b) => a.Title.localeCompare(b.Title));
   if (event.target.value === "z-a") sorted.sort((a, b) => b.Title.localeCompare(a.Title));
@@ -48,10 +48,9 @@ function displayMovies(movies) {
   if (event.target.value === "oldest") sorted.sort((a, b) => parseInt(a.Year) - parseInt(b.Year));
   displayMovies(sorted);
 });
-}
 
 document.getElementById("searchForm").addEventListener("submit", (event) => {
   event.preventDefault();
   const searchTerm = document.getElementById("searchInput").value;
   main(searchTerm); 
-})
+});
