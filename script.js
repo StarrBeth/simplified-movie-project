@@ -1,4 +1,16 @@
 async function main(searchTerm) {
+function loadingState() {
+  const loadingHTML = `
+    <div class="movie-card movie-card--skeleton">
+      <div class="movie-card__img--skeleton"></div>
+      <div class="movie-card__title--skeleton"></div>
+      <div class="movie-card__year--skeleton"></div>
+    </div>
+  `;
+
+  document.getElementById('moviesGrid').innerHTML = loadingHTML;
+}
+
   const movies = await fetch(`https://www.omdbapi.com/?apikey=d33b9ed4&s=${searchTerm}`);
   const moviesData = await movies.json();
   console.log(moviesData);
@@ -25,5 +37,5 @@ function displayMovies(movies) {
 document.getElementById("searchForm").addEventListener("submit", (event) => {
   event.preventDefault();
   const searchTerm = document.getElementById("searchInput").value;
-  main(searchTerm);
+  main(searchTerm); 
 })
